@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Propuesta de BUHO para Bruno Asesor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: "BUHO Brand" - Using the official brand colors. The deep blue (#1F4572) for primary actions and text, and the warm gold (#DEB450) for accents, creating a professional, trustworthy, and premium feel. -->
+    <!-- Application Structure Plan: The SPA is structured as a narrative journey to guide the client. It starts with a Hero section, followed by a personalized intro. The core "Services" are in interactive tabs. A "Before & After" mockup provides a visual proof of concept. A new "AI Content Assistant" section powered by the Gemini API has been added to demonstrate advanced capabilities and provide a "wow" factor. It's followed by "Benefits" cards, a "Process" timeline, and a CTA. This interactive approach is more persuasive by involving the user and showcasing tangible value. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: 4 Service Phases -> Goal: Organize/Inform -> Viz/Method: Interactive Tabs (HTML/JS/Tailwind) -> Interaction: Click to reveal content -> Justification: Prevents overwhelming the user with text, making the service offering easy to explore.
+        - Report Info: Profile Improvement -> Goal: Compare/Persuade -> Viz/Method: "Before & After" HTML/CSS Mockup -> Interaction: Static visual comparison -> Justification: The most powerful way to show tangible results.
+        - Report Info: Content Strategy -> Goal: Inform/Demonstrate -> Viz/Method: AI Content Assistant (Gemini API) -> Interaction: User inputs topic/type, gets AI-generated post -> Justification: Provides a live demo of advanced content creation capabilities, a key selling point.
+        - Report Info: Content Mix -> Goal: Compare/Inform -> Viz/Method: Doughnut Chart (Chart.js) -> Interaction: Hover for tooltips -> Justification: Visualizes the content plan, making it feel concrete.
+        - Report Info: Process -> Goal: Inform/Organize -> Viz/Method: Vertical Timeline (HTML/CSS/Tailwind) -> Interaction: Static visual -> Justification: Clearly outlines the workflow, managing client expectations.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .tab-active {
+            background-color: #1F4572;
+            color: white;
+        }
+        .tab-inactive {
+            background-color: #e5e7eb;
+            color: #374151;
+        }
+        .chart-container {
+            position: relative; 
+            width: 100%; 
+            max-width: 400px; 
+            margin-left: auto; 
+            margin-right: auto; 
+            height: auto;
+            max-height: 400px;
+        }
+        #ai-output {
+            white-space: pre-wrap;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #1F4572;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Scroll Animation Classes */
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .scroll-animate.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.2s; }
+        .delay-3 { transition-delay: 0.3s; }
+        .delay-4 { transition-delay: 0.4s; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <!-- ================================================================== -->
+                <!-- AQUI ES DONDE PONES TU LOGO -->
+                <!-- Sube tu archivo "Buho.jpg" a la misma carpeta que este HTML -->
+                <!-- Y reemplaza la línea de abajo por esta: -->
+                <!-- <img src="Buho.jpg" alt="Logo BUHO" class="h-8 w-8"> -->
+                <!-- ================================================================== -->
+                <img src="https://placehold.co/40x40/1F4572/FFFFFF?text=B&font=inter" alt="Logo BUHO" class="h-8 w-8 rounded-md">
+                <span class="text-xl font-bold text-[#1F4572]">BUHO</span>
+            </div>
+            <div class="hidden md:flex space-x-6">
+                <a href="#servicios" class="text-slate-600 hover:text-[#1F4572] transition">Servicios</a>
+                <a href="#visualizacion" class="text-slate-600 hover:text-[#1F4572] transition">Visualización</a>
+                <a href="#asistente-ia" class="text-slate-600 hover:text-[#1F4572] transition">Creador de Tendencias</a>
+                <a href="#beneficios" class="text-slate-600 hover:text-[#1F4572] transition">Beneficios</a>
+                <a href="#pasos" class="text-slate-600 hover:text-[#1F4572] transition">Contacto</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="bg-white">
+            <div class="container mx-auto px-6 py-20 md:py-32 text-center">
+                <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 leading-tight scroll-animate">Transformamos tu Instagram en una herramienta de captación.</h1>
+                <p class="mt-6 text-lg text-slate-600 max-w-2xl mx-auto scroll-animate delay-1">Hola Bruno, hemos preparado un plan a medida para llevar tu perfil profesional al siguiente nivel.</p>
+                <a href="#propuesta" class="mt-8 inline-block bg-[#1F4572] text-white font-bold py-3 px-8 rounded-lg hover:bg-[#1A3A60] transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 scroll-animate delay-2">Ver la Propuesta</a>
+            </div>
+        </section>
+
+        <section id="propuesta" class="py-20">
+            <div class="container mx-auto px-6">
+                 <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900 scroll-animate">Tu Plan de Crecimiento Personalizado</h2>
+                    <p class="mt-4 text-slate-600 max-w-3xl mx-auto scroll-animate delay-1">Nuestro objetivo es claro: convertir tu perfil de un simple contacto a una máquina de generar confianza y atraer clientes calificados.</p>
+                </div>
+
+                <div id="servicios" class="bg-white p-8 rounded-2xl shadow-xl max-w-4xl mx-auto scroll-animate">
+                    <h3 class="text-2xl font-bold text-center mb-8">Nuestros Servicios: Un Plan Integral</h3>
+                    
+                    <div class="flex flex-col sm:flex-row justify-center mb-8 border-b border-slate-200">
+                        <button data-tab="tab1" class="tab-button tab-active py-3 px-4 font-medium text-sm sm:text-base flex-grow text-center rounded-t-lg transition">Fase 1: Optimización</button>
+                        <button data-tab="tab2" class="tab-button tab-inactive py-3 px-4 font-medium text-sm sm:text-base flex-grow text-center rounded-t-lg transition">Fase 2: Diseño Visual</button>
+                        <button data-tab="tab3" class="tab-button tab-inactive py-3 px-4 font-medium text-sm sm:text-base flex-grow text-center rounded-t-lg transition">Fase 3: Contenido</button>
+                        <button data-tab="tab4" class="tab-button tab-inactive py-3 px-4 font-medium text-sm sm:text-base flex-grow text-center rounded-t-lg transition">Fase 4: Crecimiento</button>
+                    </div>
+
+                    <div id="tabContent">
+                        <div id="tab1" class="tab-pane">
+                            <h4 class="font-bold text-xl mb-4 text-[#1F4572]">🚀 FASE 1: Optimización y Relanzamiento de Perfil</h4>
+                            <p class="text-slate-600 mb-6">El objetivo es que tu perfil luzca 100% profesional, confiable y claro en menos de 5 segundos.</p>
+                            <ul class="space-y-4">
+                                <li class="flex items-start"><span class="text-[#1F4572] mr-3 mt-1">✓</span><div><strong class="text-slate-800">Foto de Perfil Profesional:</strong> Selección y retoque de una imagen que inspire máxima confianza.</div></li>
+                                <li class="flex items-start"><span class="text-[#1F4572] mr-3 mt-1">✓</span><div><strong class="text-slate-800">Biografía Estratégica:</strong> Reescribimos tu bio para comunicar tu valor y con un llamado a la acción claro.</div></li>
+                                <li class="flex items-start"><span class="text-[#1F4572] mr-3 mt-1">✓</span><div><strong class="text-slate-800">Árbol de Enlaces (Linktree):</strong> Un único enlace profesional con acceso a tu WhatsApp, web y más.</div></li>
+                                <li class="flex items-start"><span class="text-[#1F4572] mr-3 mt-1">✓</span><div><strong class="text-slate-800">Historias Destacadas:</strong> Diseño de portadas profesionales para organizar tu información clave (Servicios, Sobre Mí, Clientes).</div></li>
+                            </ul>
+                        </div>
+                        <div id="tab2" class="tab-pane hidden">
+                            <h4 class="font-bold text-xl mb-4 text-[#1F4572]">🎨 FASE 2: Diseño de Identidad Visual</h4>
+                            <p class="text-slate-600 mb-6">El objetivo es crear una estética de marca memorable y coherente que te distinga de la competencia.</p>
+                            <ul class="space-y-4">
+                                <li class="flex items-start"><span class="text-[#1F4572] mr-3 mt-1">✓</span><div><strong class="text-slate-800">Paleta de Colores y Tipografías:</strong> Definimos un manual de marca simple para una línea visual consistente.</div></li>
+                                <li class="flex items-start"><span class="text-[#1F4572] mr-3 mt-1">✓</span><div><strong class="text-slate-800">Diseño de Plantillas Personalizadas:</strong> Creamos plantillas en Canva para tus diferentes contenidos (frases, tips, carruseles).</div></li>
+                                <li class="flex items-start"><span class="text-[#1F4572] mr-3 mt-1">✓</span><div><strong class="text-slate-800">Planificación Estética del Feed:</strong> Diseñamos la apariencia de tu feed para que luzca ordenado y atractivo.</div></li>
+                            </ul>
+                        </div>
+                        <div id="tab3" class="tab-pane hidden">
+                             <h4 class="font-bold text-xl mb-4 text-[#1F4572]">✍️ FASE 3: Gestión y Creación de Contenido de Valor</h4>
+                            <p class="text-slate-600 mb-6">El objetivo es atraer, educar y convertir a tu audiencia con contenido que responda a sus necesidades y sueños.</p>
+                             <ul class="space-y-4">
+                                <li class="flex items-start"><span class="text-[#1F4572] mr-3 mt-1">✓</span><div><strong class="text-slate-800">Calendario Editorial Mensual:</strong> Planificamos con antelación todos los temas y fechas de publicación.</div></li>
+                                <li class="flex items-start"><span class="text-[#1F4572] mr-3 mt-1">✓</span><div><strong class="text-slate-800">Contenido Multi-formato:</strong> Creamos posts, Reels dinámicos y Stories diarias para mantener a tu audiencia enganchada.</div></li>
+                                <li class="flex items-start"><span class="text-[#1F4572] mr-3 mt-1">✓</span><div><strong class="text-slate-800">Copywriting Persuasivo:</strong> Redactamos todos los textos enfocados en conectar y motivar a la acción.</div></li>
+                            </ul>
+                        </div>
+                        <div id="tab4" class="tab-pane hidden">
+                            <h4 class="font-bold text-xl mb-4 text-[#1F4572]">📈 FASE 4: Estrategia de Crecimiento y Comunidad</h4>
+                            <p class="text-slate-600 mb-6">El objetivo es aumentar tu visibilidad, conseguir seguidores de calidad (potenciales clientes) y construir una comunidad leal.</p>
+                            <ul class="space-y-4">
+                                <li class="flex items-start"><span class="text-[#1F4572] mr-3 mt-1">✓</span><div><strong class="text-slate-800">Estrategia de Hashtags:</strong> Investigamos y seleccionamos hashtags locales y de nicho para maximizar tu alcance.</div></li>
+                                <li class="flex items-start"><span class="text-[#1F4572] mr-3 mt-1">✓</span><div><strong class="text-slate-800">Community Management Activo:</strong> Gestionamos comentarios y mensajes para una atención al cliente impecable.</div></li>
+                                <li class="flex items-start"><span class="text-[#1F4572] mr-3 mt-1">✓</span><div><strong class="text-slate-800">Interacción Estratégica:</strong> Interactuamos con perfiles de la comunidad local para aumentar tu notoriedad.</div></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="visualizacion" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900 scroll-animate">La Diferencia es Visual</h2>
+                    <p class="mt-4 text-slate-600 max-w-3xl mx-auto scroll-animate delay-1">Una imagen vale más que mil palabras. Así es como planeamos transformar tu presencia online.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="scroll-animate">
+                        <h3 class="font-bold text-xl text-center mb-4">Antes: Perfil Actual</h3>
+                        <div class="bg-gray-800 rounded-2xl p-4 max-w-sm mx-auto shadow-lg">
+                            <div class="flex items-center mb-4">
+                                <img src="https://placehold.co/80x80/334155/e2e8f0?text=B" class="rounded-full w-20 h-20 border-2 border-gray-600" alt="Mockup de perfil de Instagram antes de la gestión">
+                                <div class="ml-4 flex-grow">
+                                    <div class="flex justify-around text-white text-center">
+                                        <div><span class="font-bold">1</span><br><span class="text-sm text-gray-400">publi..</span></div>
+                                        <div><span class="font-bold">92</span><br><span class="text-sm text-gray-400">segu..</span></div>
+                                        <div><span class="font-bold">8</span><br><span class="text-sm text-gray-400">segui..</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-white text-sm">
+                                <p class="font-bold">Bruno Asesor</p>
+                                <p class="text-gray-400">Finanzas, Productor Asesor Matriculado...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="scroll-animate delay-2">
+                        <h3 class="font-bold text-xl text-center mb-4">Después: Propuesta Profesional</h3>
+                        <div class="bg-white rounded-2xl p-4 max-w-sm mx-auto shadow-2xl border">
+                             <div class="flex items-center mb-4">
+                                <img src="https://placehold.co/80x80/1F4572/FFFFFF?text=B" class="rounded-full w-20 h-20 border-2 border-[#DEB450]" alt="Mockup de perfil de Instagram después de la gestión profesional">
+                                <div class="ml-4 flex-grow">
+                                    <div class="flex justify-around text-slate-800 text-center">
+                                        <div><span class="font-bold">58</span><br><span class="text-sm text-slate-500">posts</span></div>
+                                        <div><span class="font-bold">2.1K</span><br><span class="text-sm text-slate-500">seguidores</span></div>
+                                        <div><span class="font-bold">350</span><br><span class="text-sm text-slate-500">seguidos</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-slate-800 text-sm">
+                                <p class="font-bold">Bruno | Asesor Financiero 👨‍💼</p>
+                                <p class="text-slate-600">Te ayudo a hacer realidad tus proyectos 👇<br>🏡 Créditos para tu Casa<br>🚗 Financiación Auto/Moto<br>💰 Planes de Ahorro</p>
+                                <a href="#" class="text-[#1F4572] font-semibold">linktr.ee/bruno.asesor</a>
+                            </div>
+                             <div class="mt-4 flex justify-around">
+                                <div class="text-center"><div class="w-16 h-16 bg-slate-200 rounded-full mx-auto mb-1 flex items-center justify-center text-slate-500 text-xs">Servicios</div></div>
+                                <div class="text-center"><div class="w-16 h-16 bg-slate-200 rounded-full mx-auto mb-1 flex items-center justify-center text-slate-500 text-xs">Clientes</div></div>
+                                <div class="text-center"><div class="w-16 h-16 bg-slate-200 rounded-full mx-auto mb-1 flex items-center justify-center text-slate-500 text-xs">Contacto</div></div>
+                                <div class="text-center"><div class="w-16 h-16 bg-slate-200 rounded-full mx-auto mb-1 flex items-center justify-center text-slate-500 text-xs">FAQ</div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mt-20">
+                     <div class="md:order-2 scroll-animate">
+                        <h3 class="font-bold text-2xl mb-4">Nuestro Proceso de Trabajo</h3>
+                        <p class="text-slate-600 mb-6">Trabajamos con una metodología clara para garantizar resultados medibles. Este es nuestro plan de acción para los primeros dos meses.</p>
+                        <ol class="relative border-l border-slate-200">                  
+                            <li class="mb-10 ml-4">
+                                <div class="absolute w-3 h-3 bg-slate-200 rounded-full mt-1.5 -left-1.5 border border-white"></div>
+                                <time class="mb-1 text-sm font-normal leading-none text-slate-400">Semana 1</time>
+                                <h4 class="text-lg font-semibold text-slate-900">Estrategia y Diseño</h4>
+                                <p class="text-base font-normal text-slate-500">Optimización completa del perfil y diseño de la identidad visual y plantillas.</p>
+                            </li>
+                            <li class="mb-10 ml-4">
+                                <div class="absolute w-3 h-3 bg-slate-200 rounded-full mt-1.5 -left-1.5 border border-white"></div>
+                                <time class="mb-1 text-sm font-normal leading-none text-slate-400">Semanas 2-4</time>
+                                <h4 class="text-lg font-semibold text-slate-900">Lanzamiento de Contenido</h4>
+                                <p class="text-base font-normal text-slate-500">Publicación del primer contenido, inicio de la interacción y captación de seguidores.</p>
+                            </li>
+                            <li class="ml-4">
+                                <div class="absolute w-3 h-3 bg-slate-200 rounded-full mt-1.5 -left-1.5 border border-white"></div>
+                                <time class="mb-1 text-sm font-normal leading-none text-slate-400">Mes 2 y Adelante</time>
+                                <h4 class="text-lg font-semibold text-slate-900">Crecimiento y Análisis</h4>
+                                <p class="text-base font-normal text-slate-500">Gestión continua, análisis de métricas y ajuste de la estrategia para mejores resultados.</p>
+                            </li>
+                        </ol>
+                    </div>
+                    <div class="md:order-1 scroll-animate delay-2">
+                        <h3 class="font-bold text-2xl mb-4 text-center">Mix de Contenidos Planificado</h3>
+                        <div class="chart-container">
+                             <canvas id="contentMixChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="asistente-ia" class="py-20">
+            <div class="container mx-auto px-6">
+                 <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900 scroll-animate">Prueba Nuestro Creador de Tendencias</h2>
+                    <p class="mt-4 text-slate-600 max-w-3xl mx-auto scroll-animate delay-1">Demostramos nuestro valor con hechos. Usa nuestra herramienta de IA para generar un borrador de post para Instagram en segundos.</p>
+                </div>
+
+                <div class="bg-white p-8 rounded-2xl shadow-xl max-w-2xl mx-auto scroll-animate">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label for="post-type" class="block mb-2 text-sm font-medium text-slate-700">1. Elige el tipo de post:</label>
+                            <select id="post-type" class="bg-slate-100 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                <option value="Educativo">Educativo</option>
+                                <option value="Inspiracional">Inspiracional</option>
+                                <option value="Venta">Venta Directa</option>
+                                <option value="Interacción">Fomentar Interacción</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="post-topic" class="block mb-2 text-sm font-medium text-slate-700">2. Escribe un tema:</label>
+                            <input type="text" id="post-topic" class="bg-slate-100 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Ej: ahorro para un 0km">
+                        </div>
+                    </div>
+                    <button id="generate-post-btn" class="w-full bg-[#1F4572] text-white font-bold py-3 px-8 rounded-lg hover:bg-[#1A3A60] transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                        Generar Tendencia
+                    </button>
+                    <div id="ai-result-container" class="mt-8">
+                        <div id="loader" class="hidden mx-auto loader"></div>
+                        <div id="ai-output-wrapper" class="hidden">
+                            <h4 class="font-bold text-lg mb-4">Resultado Generado:</h4>
+                            <div id="ai-output" class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-slate-700 text-sm">
+                            </div>
+                        </div>
+                         <div id="ai-error" class="hidden text-center text-red-500 bg-red-100 p-4 rounded-lg">
+                            Ocurrió un error al generar el contenido. Por favor, intenta de nuevo.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="beneficios" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900 scroll-animate">¿Qué Obtienes al Trabajar con Nosotros?</h2>
+                    <p class="mt-4 text-slate-600 max-w-3xl mx-auto scroll-animate delay-1">Más que solo publicaciones. Obtienes un socio estratégico para tu crecimiento digital.</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-md text-center border scroll-animate delay-1">
+                        <div class="text-4xl mb-4">⏱️</div>
+                        <h4 class="font-bold text-lg mb-2">Ahorro de Tiempo</h4>
+                        <p class="text-slate-600 text-sm">Delega tu presencia online y enfócate 100% en asesorar a tus clientes.</p>
+                    </div>
+                     <div class="bg-white p-6 rounded-lg shadow-md text-center border scroll-animate delay-2">
+                        <div class="text-4xl mb-4">👔</div>
+                        <h4 class="font-bold text-lg mb-2">Imagen Profesional</h4>
+                        <p class="text-slate-600 text-sm">Tu perfil se verá como el de un líder del sector, generando confianza inmediata.</p>
+                    </div>
+                     <div class="bg-white p-6 rounded-lg shadow-md text-center border scroll-animate delay-3">
+                        <div class="text-4xl mb-4">🎯</div>
+                        <h4 class="font-bold text-lg mb-2">Crecimiento Sostenido</h4>
+                        <p class="text-slate-600 text-sm">Atraerás de forma constante a personas realmente interesadas en tus servicios.</p>
+                    </div>
+                     <div class="bg-white p-6 rounded-lg shadow-md text-center border scroll-animate delay-4">
+                        <div class="text-4xl mb-4">✍️</div>
+                        <h4 class="font-bold text-lg mb-2">Contenido de Calidad</h4>
+                        <p class="text-slate-600 text-sm">Publicaciones que te posicionarán como un experto y educarán a tu audiencia.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="pasos" class="bg-[#1F4572] text-white">
+            <div class="container mx-auto px-6 py-20 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold">¿Listo para Empezar?</h2>
+                <p class="mt-4 max-w-2xl mx-auto opacity-90">Demos el siguiente paso. Nos encantaría conversar sobre esta propuesta y adaptarla a tus objetivos específicos.</p>
+                <a href="mailto:buhoasesoriadigital@gmail.com?subject=Interesado en la Propuesta de BUHO" class="mt-8 inline-block bg-white text-[#1F4572] font-bold py-3 px-8 rounded-lg hover:bg-slate-100 transition shadow-lg">Contáctanos</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-800 text-white">
+        <div class="container mx-auto px-6 py-8 text-center text-slate-400">
+            <p class="font-bold text-lg text-white mb-2">BUHO Asesoramiento Digital</p>
+            <p>Expertos en gestión de redes sociales y crecimiento digital.</p>
+            <div class="mt-4">
+                <a href="mailto:buhoasesoriadigital@gmail.com" class="hover:text-white transition">buhoasesoriadigital@gmail.com</a>
+                <span class="mx-2">|</span>
+                <a href="tel:+541133578873" class="hover:text-white transition">+54 11 3357 8873</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Tab functionality
+        const tabs = document.querySelectorAll('.tab-button');
+        const panes = document.querySelectorAll('.tab-pane');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetPaneId = tab.getAttribute('data-tab');
+                tabs.forEach(t => {
+                    t.classList.remove('tab-active');
+                    t.classList.add('tab-inactive');
+                });
+                tab.classList.add('tab-active');
+                tab.classList.remove('tab-inactive');
+                panes.forEach(pane => {
+                    if (pane.id === targetPaneId) {
+                        pane.classList.remove('hidden');
+                    } else {
+                        pane.classList.add('hidden');
+                    }
+                });
+            });
+        });
+
+        // Chart.js functionality
+        const ctx = document.getElementById('contentMixChart').getContext('2d');
+        const contentMixChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Reels Educativos', 'Carruseles de Tips', 'Historias Interactivas', 'Posts de Valor'],
+                datasets: [{
+                    label: 'Mix de Contenido',
+                    data: [40, 30, 20, 10],
+                    backgroundColor: ['#1F4572', '#4A72A4', '#7E9CC4', '#AEC7E4'],
+                    borderColor: ['#ffffff'],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { font: { family: "'Inter', sans-serif" } }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) { label += ': '; }
+                                if (context.parsed !== null) { label += context.parsed + '%'; }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Gemini AI Assistant Logic
+        const generateBtn = document.getElementById('generate-post-btn');
+        const postTypeSelect = document.getElementById('post-type');
+        const postTopicInput = document.getElementById('post-topic');
+        const loader = document.getElementById('loader');
+        const outputWrapper = document.getElementById('ai-output-wrapper');
+        const outputDiv = document.getElementById('ai-output');
+        const errorDiv = document.getElementById('ai-error');
+
+        generateBtn.addEventListener('click', async () => {
+            const postType = postTypeSelect.value;
+            const topic = postTopicInput.value.trim();
+
+            if (!topic) {
+                alert('Por favor, ingresa un tema para la publicación.');
+                return;
+            }
+
+            loader.classList.remove('hidden');
+            outputWrapper.classList.add('hidden');
+            errorDiv.classList.add('hidden');
+            generateBtn.disabled = true;
+            generateBtn.textContent = 'Generando Tendencia...';
+
+            const prompt = `Actúa como un community manager experto para un asesor financiero en Argentina. Tu objetivo es crear un post para Instagram que sea profesional, cercano y efectivo.
+
+            - Tipo de publicación: ${postType}
+            - Tema principal: ${topic}
+
+            Escribe un borrador completo para la publicación que incluya:
+            1. Un título o gancho potente.
+            2. Un cuerpo de 2 a 3 párrafos cortos y fáciles de leer.
+            3. El uso de emojis relevantes para estructurar y amenizar el texto.
+            4. Una pregunta final clara para fomentar la interacción (comentarios).
+            5. Una lista de 5 hashtags estratégicos (mezclando algunos populares y otros de nicho).
+
+            El tono debe ser confiable y motivador, enfocado en ayudar a las personas a alcanzar sus metas financieras.`;
+
+            try {
+                const apiKey = ""; 
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                
+                let chatHistory = [];
+                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                const payload = { contents: chatHistory };
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) { throw new Error(`Error en la API: ${response.statusText}`); }
+
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    outputDiv.textContent = text;
+                    outputWrapper.classList.remove('hidden');
+                } else {
+                     throw new Error('No se recibió contenido válido de la API.');
+                }
+            } catch (error) {
+                console.error('Error fetching Gemini API:', error);
+                errorDiv.classList.remove('hidden');
+            } finally {
+                loader.classList.add('hidden');
+                generateBtn.disabled = false;
+                generateBtn.textContent = 'Generar Tendencia';
+            }
+        });
+
+        // Scroll Animation Logic
+        const animatedElements = document.querySelectorAll('.scroll-animate');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        animatedElements.forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
